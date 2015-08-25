@@ -14,38 +14,32 @@
 
     function HourPicker( element, options ) {
         this.$el = $(element);
-        console.log(this.$el);
         this.proxy('show').proxy('hide').proxy('keyHandler').proxy('selectHours');
-
         var options = $.extend({}, $.fn.hourpicker.defaults, options );
-
-
         $.extend(this, options);
         this.$el.data('hourpicker', this);
         this.$el.addClass('hasHourPicker');
         all.push(this);
         this.init();
-
-
-
     }
 
     HourPicker.prototype = {
 
         init: function() {
-
+            this.selectHours();
             hourTable = $("<div>").addClass('hourTable');
             // Populate day of week headers, realigned by startOfWeek.
             this.$hours = $('<div>').addClass('hours');
             for (var i = 0; i < this.hourNames.length; i++) {
                 var $hour = $('<div>').attr('hour', this.hourNames[i]);
                 $hour.text(this.hourNames[i]);
+                if (this.selectedHourArr.indexOf(this.hourNames[i]) > -1) {
+                    $hour.addClass('selected');
+                }
                 this.$hours.append($hour);
             };
 
-
             hourTable.append(this.$hours);
-
             this.$picker = $('<div>')
                 .click(function(e) { e.stopPropagation() })
                 // Use this to prevent accidental text selection.
@@ -62,31 +56,20 @@
             $('div', this.$hours).click($.proxy(function(e) {
                 var $targ = $(e.target);
                 $targ.toggleClass('selected');
-                // The date= attribute is used here to provide relatively fast
-                // selectors for setting certain date cells.
-
                 var hr = [];
                 $(this.$hours.find('.selected')).each(function (idx, elt) {
                     hr.push($(elt).attr('hour'));
                 });
-                console.log(hr);
-
-
                 this.update(hr.join(','));
-
-
             }, this));
-
-            //this.selectHours();
-            //this.hide();
-
+            console.log(this.selectHours());
         }
 
         , selectHours: function(date) {
             if (typeof(hour) == "undefined") {
                 hour = this.parse(this.$el.val());
             };
-            this.selectedHourStr = hour;
+            this.selectedHourArr = hour;
         }
 
         , update: function(s) {
@@ -125,7 +108,7 @@
                     this.hide(); return;
                 case 13:
                     // Enter selects the currently highlighted date.
-                    this.update(this.selectedHourStr); this.hide(); break;
+                    this.update(this.selectedHourArr); this.hide(); break;
                 case 38:
                     // Arrow up goes to prev week.
                     this.ahead(0, -7); break;
@@ -145,7 +128,6 @@
         }
 
         , parse: function(s) {
-            console.log(s);
             // Parse imploded list.
             var m;
             if ((m = s.split(',') )) {
