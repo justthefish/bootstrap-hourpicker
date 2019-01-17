@@ -8,5 +8,5 @@ Based on bootstrap datepicker.
 usage
 ---
 
-see [demo](http://justthefish.github.io/bootstrap-hourpicker/) for details
+see [demo](http://thefish.github.io/bootstrap-hourpicker/) for details
 
